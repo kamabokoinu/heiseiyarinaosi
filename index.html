@@ -1,0 +1,606 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>平成やり直し 最初の10年</title>
+<meta name="description" content="バブル絶頂の1989年から、失われた平成をやり直す政治シミュレーション。17の分岐で、あなたの「もしも」の10年を描く。">
+<meta property="og:title" content="平成やり直し 最初の10年（試作版）">
+<meta property="og:description" content="バブル絶頂の1989年から、失われた平成をやり直す政治シミュレーション。17の分岐で、あなたの「もしも」の10年を描く。">
+<meta property="og:type" content="website">
+<meta name="twitter:card" content="summary">
+<style>
+:root{color-scheme:light;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+body{margin:0;font:14px/1.5 system-ui,sans-serif}
+img{max-width:100%}
+[hidden]{display:none!important}
+</style>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DotGothic16&family=Shippori+Mincho+B1:wght@600;800&family=Zen+Kaku+Gothic+New:wght@400;500;700&display=swap">
+<style>
+/* Layout: one column "決裁書" (decision paper) on a cool desk ground; gauges above, pager LCD for remembered decisions */
+:root{
+  --ground:#E8EBE5; --paper:#F8F9F5; --ink:#1D2238; --muted:#5A6074; --rule:#C8CDC4;
+  --seal:#C23B2B; --navy:#2B3B7C; --navy-soft:#E3E7F4;
+  --lcd-bg:#B6C798; --lcd-ink:#22301A;
+  --good:#2C774B; --bad:#B4412E;
+  --f-display:"Shippori Mincho B1","Hiragino Mincho ProN","Yu Mincho",serif;
+  --f-body:"Zen Kaku Gothic New","Hiragino Sans","Yu Gothic",system-ui,sans-serif;
+  --f-lcd:"DotGothic16","MS Gothic",monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --ground:#11141D; --paper:#1A1F2C; --ink:#E6E8EE; --muted:#9AA0B1; --rule:#2F3547;
+  --seal:#E2634F; --navy:#94A6EC; --navy-soft:#232B45;
+  --lcd-bg:#A8BB86; --lcd-ink:#1D2814; --good:#6CC28F; --bad:#EE7E68; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --ground:#11141D; --paper:#1A1F2C; --ink:#E6E8EE; --muted:#9AA0B1; --rule:#2F3547;
+  --seal:#E2634F; --navy:#94A6EC; --navy-soft:#232B45;
+  --lcd-bg:#A8BB86; --lcd-ink:#1D2814; --good:#6CC28F; --bad:#EE7E68; color-scheme:dark}
+
+*{box-sizing:border-box}
+body{background:var(--ground);color:var(--ink);font-family:var(--f-body);font-size:15px;line-height:1.75;
+  padding-block:24px 48px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.wrap{max-width:760px;margin:0 auto;display:grid;gap:20px}
+header{display:grid;gap:4px}
+.eyebrow{font-size:12px;letter-spacing:.12em;color:var(--muted)}
+h1{font-family:var(--f-display);font-weight:800;font-size:clamp(28px,6vw,40px);line-height:1.2;margin:0;text-wrap:balance}
+.role{font-size:13px;color:var(--muted)}
+.track{display:flex;gap:6px;align-items:center;flex-wrap:wrap;font-size:12px;color:var(--muted);font-variant-numeric:tabular-nums}
+.track span{padding:2px 8px;border:1px solid var(--rule);border-radius:2px}
+.track .now{border-color:var(--ink);color:var(--ink);font-weight:700}
+.track .done{text-decoration:line-through;opacity:.6}
+
+.board{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:1px;background:var(--rule);border:1px solid var(--rule)}
+@media (max-width:560px){.board{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.g{background:var(--paper);padding:10px 12px;display:grid;gap:2px;align-content:start}
+.g .lb{font-size:11px;letter-spacing:.08em;color:var(--muted)}
+.g .v{font-size:19px;font-weight:700;font-variant-numeric:tabular-nums;line-height:1.25}
+.g .v.txt{font-size:14px;line-height:1.4}
+.g .d{font-size:12px;font-variant-numeric:tabular-nums;min-height:1.2em}
+.up{color:var(--good)} .dn{color:var(--bad)}
+.bar{height:4px;background:var(--rule);margin-top:4px}
+.bar i{display:block;height:100%;background:var(--ink)}
+
+.doc{background:var(--paper);border:1px solid var(--ink);padding:22px 20px 20px;position:relative;display:grid;gap:14px}
+.doc .date{font-family:var(--f-display);font-size:14px;color:var(--muted);font-variant-numeric:tabular-nums}
+.doc h2{font-family:var(--f-display);font-weight:800;font-size:clamp(22px,4.6vw,30px);line-height:1.3;margin:0;text-wrap:balance;padding-right:64px}
+.sesou{font-size:13px;color:var(--muted);border-left:2px solid var(--rule);padding-left:10px}
+.sit{margin:0;max-width:62ch}
+.opts{display:grid;gap:10px}
+.opt{all:unset;box-sizing:border-box;cursor:pointer;display:grid;gap:4px;padding:12px 14px;border:1px solid var(--rule);background:var(--ground);transition:border-color .15s}
+.opt:hover{border-color:var(--ink)}
+.opt:focus-visible{outline:2px solid var(--navy);outline-offset:2px}
+.opt .t{font-weight:700;line-height:1.5}
+.tag{justify-self:start;font-size:11px;letter-spacing:.06em;padding:1px 7px;border:1px solid var(--muted);color:var(--muted)}
+.tag.adv{border-color:var(--navy);color:var(--navy);background:var(--navy-soft)}
+.tag.dir{border-color:var(--seal);color:var(--seal)}
+.tag.alt{border-style:dashed}
+
+.stamp{position:absolute;top:16px;right:16px;width:58px;height:58px;border:3px solid var(--seal);color:var(--seal);border-radius:50%;
+  display:grid;place-items:center;font-family:var(--f-display);font-weight:800;font-size:15px;line-height:1.1;text-align:center;transform:rotate(-12deg);opacity:.9}
+@media (prefers-reduced-motion:no-preference){.stamp{animation:press .35s ease-out}}
+@keyframes press{from{transform:rotate(-12deg) scale(1.6);opacity:0}to{transform:rotate(-12deg) scale(1);opacity:.9}}
+.res{margin:0;max-width:62ch}
+.extra{margin:0;max-width:62ch;font-weight:700}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{font-size:12px;padding:2px 8px;border:1px solid var(--rule);font-variant-numeric:tabular-nums}
+.chip.hid{border-style:dashed;color:var(--muted)}
+
+.pager{background:var(--lcd-bg);color:var(--lcd-ink);font-family:var(--f-lcd);padding:10px 14px;border:3px solid var(--ink);border-radius:6px;
+  display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;font-size:15px;letter-spacing:.06em}
+.pager small{font-size:12px;opacity:.8}
+
+.row{display:flex;gap:10px;flex-wrap:wrap}
+.btn{all:unset;box-sizing:border-box;cursor:pointer;background:var(--ink);color:var(--paper);padding:10px 20px;font-weight:700;letter-spacing:.06em}
+.btn:focus-visible{outline:2px solid var(--navy);outline-offset:2px}
+.btn.ghost{background:transparent;color:var(--ink);border:1px solid var(--ink)}
+
+.tbl{overflow-x:auto}
+table{border-collapse:collapse;width:100%;font-variant-numeric:tabular-nums;font-size:14px}
+th,td{text-align:left;padding:6px 8px;border-bottom:1px solid var(--rule);white-space:nowrap}
+th{font-size:12px;color:var(--muted);font-weight:500}
+td.n,th.n{text-align:right}
+.verdict{font-family:var(--f-display);font-size:clamp(20px,4vw,26px);font-weight:800;line-height:1.4;margin:0;text-wrap:balance}
+.risk{display:inline-block;padding:0 8px;color:var(--paper);font-weight:700}
+.risk.h{background:var(--bad)} .risk.m{background:var(--muted)} .risk.l{background:var(--good)}
+ul.memos{margin:0;padding-left:1.2em;display:grid;gap:4px}
+.note{font-size:12px;color:var(--muted);margin:0}
+h3{font-size:14px;margin:0;letter-spacing:.06em}
+.sec{display:grid;gap:8px}
+.restart{display:flex;gap:8px;align-items:center;flex-wrap:wrap;justify-self:start;font-size:13px}
+.restart button{all:unset;box-sizing:border-box;cursor:pointer;padding:4px 12px;border:1px solid var(--ink);font-size:13px;font-weight:700}
+.restart button.yes{background:var(--seal);border-color:var(--seal);color:var(--paper)}
+.restart button:focus-visible{outline:2px solid var(--navy);outline-offset:2px}
+</style>
+
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="eyebrow" id="eyebrow"></div>
+    <h1>平成やり直し</h1>
+    <div class="role">あなた：与党の中堅議員（1989年時点で当選3回・大蔵族）。派閥領袖である首相の側近から出発する。</div>
+    <div class="restart" id="restart"></div>
+  </header>
+  <div class="track" id="track" aria-label="進行"></div>
+  <div class="board" id="board" aria-live="polite"></div>
+  <main id="main"></main>
+  <p class="note">試作版です。数値はゲーム内の指標で、史実の統計とは一致しません。</p>
+</div>
+
+<script>
+const CHAPTERS=[
+ {n:1,name:"第1章　バブル絶頂と崩壊",span:"1989–1992",from:0,to:5},
+ {n:2,name:"第2章　政治の地殻変動",span:"1993–1995",from:6,to:10},
+ {n:3,name:"第3章　金融危機",span:"1996–1999",from:11,to:16}
+];
+const chOf=i=>CHAPTERS.find(c=>i>=c.from&&i<=c.to);
+const ROLE={aide:"首相側近",opp:"野党議員",min:"大蔵大臣",party:"与党の政策幹部"};
+const ROLE_BONUS={aide:0,opp:-10,min:10,party:5};
+const pressure=s=>s.npl+(s.tax?8:0);
+
+const EVENTS=[
+ /* ---------- 第1章 ---------- */
+ {when:"平成元年（1989年）5月",short:"89.5",title:"日銀、利上げへ",
+  sesou:"「東京の地価で米国全土が買える」とまで言われた。",
+  sit:"株価と地価の高騰が止まらない。日銀は利上げに動く構えで、首相から「どう思う」と意見を求められた。",
+  opts:[
+   {t:"日銀に任せる（急ピッチの連続利上げ）",tag:"史実",fx:{bubble:-30,npl:20,poll:2},memo:"1989 急ピッチの利上げを容認",
+    res:"日銀は急ピッチで利上げを重ねる。過熱は冷めるが、急ブレーキの反動で何かが積み上がり始めた。"},
+   {t:"小刻みに、時間をかけた利上げを進言する",tag:"進言",bonus:0,
+    ok:{fx:{bubble:-15,npl:5,trust:3},memo:"1989 段階的な利上げ",res:"首相があなたの案を日銀に伝え、利上げは小刻みに進むことになった。株価の下げは緩やかになりそうだ。"},
+    ng:{fx:{bubble:-30,npl:20,poll:2,trust:-3},rej:"段階的な利上げ",memo:"1989 急ピッチの利上げを容認",res:"「日銀には独立性がある」と首相は動かず、利上げは急ピッチで進む。"}},
+   {t:"景気を優先し、利上げ見送りを進言する",tag:"進言",bonus:-5,
+    ok:{fx:{bubble:10,npl:12,poll:-6},memo:"1989 利上げを見送り",res:"利上げは見送られた。株価はさらに上がるが、マイホームを諦める人々の怒りが広がる。"},
+    ng:{fx:{bubble:-30,npl:20,poll:2,trust:-2},memo:"1989 急ピッチの利上げを容認",res:"首相は首を振った。日銀は急ピッチで利上げを重ねる。"}}
+  ]},
+ {when:"平成元年（1989年）9月",short:"89.9",title:"米国の象徴を、日本企業が買う",
+  sesou:"企業の財テクと海外投資が過熱している。",
+  sit:"日本企業がニューヨークの名門ビルやハリウッドの映画会社を次々に買収。米国では「魂を買われた」と反発が強まっている。",
+  opts:[
+   {t:"民間の自由として静観する",tag:"史実",fx:{bubble:3,intl:-8},res:"買収は続き、米議会では対日批判が強まっていく。"},
+   {t:"財界の人脈を通じて、目立つ買収の自粛を働きかける",tag:"別ルート",fx:{bubble:-4,intl:5,trust:-2},
+    res:"大型案件の一部が見直された。財界からは「余計な口出しだ」と不満の声。"},
+   {t:"公共投資で内需を広げ、貿易黒字を減らすよう進言する",tag:"進言",bonus:0,
+    ok:{fx:{intl:6,fiscal:-8,bubble:4},res:"公共投資の積み増しが決まった。米国の反発はやや和らぐが、財政と景気の過熱に負担が残る。"},
+    ng:{fx:{bubble:3,intl:-8},res:"首相は財政規律を優先した。買収は続き、対日批判が強まる。"}}
+  ]},
+ {when:"平成2年（1990年）3月",short:"90.3",title:"不動産融資に「総量規制」",
+  sesou:"株価は年明けから2割以上下落した。",
+  sit:"株価は急落しているのに、地価は上がり続けている。大蔵省は銀行の不動産融資を抑える「総量規制」を準備中だ。大蔵族のあなたには、省内に太いパイプがある。",
+  opts:[
+   {t:"総量規制を即時に実施させる",tag:"史実",fx:{bubble:-30,npl:30,poll:5},memo:"1990 総量規制を即時実施",
+    res:"銀行の不動産融資は一気に絞られた。地価はやがて急落に向かう。この急ブレーキは、のちに大きなツケを残すかもしれない。"},
+   {t:"段階的な導入を大蔵省と調整する",tag:"進言",bonus:15,
+    ok:{fx:{bubble:-20,npl:8,trust:5},memo:"1990 総量規制を段階導入",res:"規制は数年かけて段階的に導入される。地価は高止まりするが、急落の衝撃はやわらいだ。"},
+    ng:{fx:{bubble:-30,npl:30,poll:5,trust:-3},rej:"総量規制の段階導入",memo:"1990 総量規制を即時実施",res:"大蔵省は「地価対策は待ったなし」と譲らず、即時実施となった。"}},
+   {t:"派閥と業界を動かし、規制を見送らせる",tag:"別ルート",fx:{bubble:5,npl:15,poll:-10,trust:-8},memo:"1990 総量規制を見送り",
+    res:"規制は見送られた。地価はさらに上がり、庶民の怒りと銀行の貸し込みが膨らんでいく。"}
+  ]},
+ {when:"平成2年（1990年）11月",short:"90.11",title:"雲仙普賢岳、198年ぶりの噴火",
+  sesou:"テレビは連日、山頂からの噴煙を中継している。",
+  sit:"長崎県の雲仙普賢岳が噴火した。活動は長引くおそれがあり、周辺住民の避難をどこまで国が主導するかが問われている。",
+  opts:[
+   {t:"地元自治体の判断に任せる",tag:"現状維持",fx:{poll:-2},res:"対応は地元任せとなった。火山活動はまだ続いている。"},
+   {t:"国が前面に立ち、警戒区域と避難体制を整えるよう進言する",tag:"進言",bonus:5,
+    ok:{fx:{poll:6,fiscal:-4,crisis:1},memo:"1990 国主導の火山避難体制",res:"国主導の避難体制が整えられた。この経験は、のちの大災害への備えにつながるかもしれない。"},
+    ng:{fx:{poll:-2},res:"「まずは地元の判断を」と首相は慎重だった。対応は地元任せとなる。"}},
+   {t:"超党派の議員連盟で、火山防災の予算を確保する",tag:"別ルート",fx:{trust:-3,fiscal:-3,crisis:1,poll:2},memo:"1990 火山防災の予算を確保",
+    res:"防災予算が上積みされた。根回しに汗をかいたぶん、党内での貸し借りが増えた。"}
+  ]},
+ {when:"平成3年（1991年）1月",short:"91.1",title:"湾岸戦争、開戦",
+  sesou:"空爆の映像がテレビゲームのようだと話題になった。",
+  sit:"多国籍軍がイラクへの攻撃を開始した。日本には資金だけでなく「汗をかく貢献」を求める声が、米国から届いている。",
+  opts:[
+   {t:"資金協力に徹する",tag:"史実",fx:{fiscal:-10,intl:-6},memo:"1991 湾岸は資金協力のみ",
+    res:"巨額の資金を拠出したが、戦後の感謝広告に日本の名前はなかった。「小切手外交」との批判が残る。"},
+   {t:"資金に加え、医療・輸送など非軍事の人的貢献を進言する",tag:"進言",bonus:-10,
+    ok:{fx:{intl:10,poll:-4,fiscal:-8},memo:"1991 湾岸で人的貢献",res:"医療チームと輸送支援の派遣が決まった。国内では憲法をめぐる論争が巻き起こる。"},
+    ng:{fx:{fiscal:-10,intl:-6},memo:"1991 湾岸は資金協力のみ",res:"党内の慎重論が勝ち、資金協力のみとなった。「小切手外交」との批判が残る。"}},
+   {t:"党内を根回しし、支援額を早めに表明させる",tag:"別ルート",fx:{trust:-3,intl:3,fiscal:-10},
+    res:"支援の表明が早まり、「遅すぎる」という批判は和らいだ。"}
+  ]},
+ {when:"平成4年（1992年）8月",short:"92.8",title:"銀行に積み上がる不良債権",
+  sesou:"「バブル崩壊」という言葉がすっかり定着した。",
+  sit:"株価は大きく落ち込み、銀行の帳簿には回収できない融資が積み上がっている。公的資金で一気に処理すれば傷は浅く済むが、「銀行救済」に世論は猛反発するだろう。",
+  opts:[
+   {t:"処理を先送りし、景気回復を待つ",tag:"史実",fx:{npl:20,poll:2},memo:"1992 不良債権処理を先送り",
+    res:"処理は先送りされた。景気が戻れば解決する、と誰もが願っていた。"},
+   {t:"公的資金を投入し、一気に処理するよう進言する",tag:"進言",bonus:-10,
+    ok:{fx:{nplMul:.35,poll:-15,trust:-10,fiscal:-10},memo:"1992 公的資金で早期処理",res:"公的資金の投入が決まった。「銀行を税金で救うのか」と世論は激しく反発し、あなたの評判も地に落ちた。それでも、傷口は小さくなった。"},
+    ng:{fx:{npl:20,poll:2,trust:-3},rej:"公的資金による早期処理",memo:"1992 不良債権処理を先送り",res:"首相は世論の反発を恐れ、案を退けた。処理は先送りとなる。"}},
+   {t:"金融検査を強め、銀行に損失の開示を迫る",tag:"別ルート",fx:{nplMul:.7,poll:-3,trust:-6},memo:"1992 検査強化で損失を開示",
+    res:"検査が厳しくなり、隠れていた損失の一部が表に出た。銀行界はあなたを敵視し始めた。"}
+  ]},
+
+ /* ---------- 第2章 ---------- */
+ {when:"平成5年（1993年）6月",short:"93.6",title:"内閣不信任案、可決へ",
+  sesou:"Jリーグが開幕し、街はサッカー熱に包まれていた。",
+  sit:"政治改革をめぐって、党内の改革派が造反を構えている。不信任案が可決されれば解散となり、党は割れるだろう。この判断が、あなた自身の居場所を決める。",
+  opts:[
+   {t:"党に残り、成り行きを見守る",tag:"史実",fx:{poll:-5},set:{role:"opp"},memo:"1993 党分裂を静観",
+    res:"不信任案は可決され、党は分裂した。総選挙の末に非自民の連立政権が誕生し、あなたは38年ぶりの野党暮らしに入る。"},
+   {t:"派閥を走り回り、改革派の離党を食い止める",tag:"進言",bonus:-15,
+    ok:{fx:{trust:8,poll:3},memo:"1993 党分裂を阻止",res:"改革派の取り込みに成功し、党の分裂は回避された。あなたの調整力は党内に知れ渡る。"},
+    ng:{fx:{poll:-5,trust:-3},set:{role:"opp"},memo:"1993 党分裂を静観",res:"説得は届かず、党は分裂した。非自民の連立政権が誕生し、あなたは野党暮らしに入る。"}},
+   {t:"改革派とともに離党し、新党に参加する",tag:"別ルート",fx:{trust:5,poll:4},set:{role:"min",path:"new"},memo:"1993 離党して新党へ",
+    res:"新党は連立政権の中核となり、あなたは大蔵大臣に抜擢された。ただし、古巣には深い恨みが残った。"}
+  ]},
+ {when:"平成5年（1993年）秋",short:"93.秋",title:"記録的冷夏、コメが消えた",
+  sesou:"スーパーの米売り場から国産米が消えた。",
+  sit:"冷夏で米の収穫は平年の7割台に落ち込んだ。緊急輸入は避けられない。一方、国際交渉ではコメ市場の部分開放も迫られている。",
+  opts:[
+   {t:"緊急輸入でしのぐ",tag:"史実",fx:{poll:-4},memo:"1993 コメを緊急輸入",res:"タイ米などが緊急輸入された。食卓は混乱したが、なんとか年を越せそうだ。"},
+   {t:"緊急輸入に加え、政府備蓄の仕組みを整えるよう求める",tag:"進言",bonus:0,
+    ok:{fx:{poll:-2,fiscal:-3,food:1},memo:"1993 コメ備蓄制度を整備",res:"備蓄米の制度づくりが始まった。数十年後のコメ不足への備えになるかもしれない。"},
+    ng:{fx:{poll:-4},memo:"1993 コメを緊急輸入",res:"「まずは目の前の不足を」と退けられ、緊急輸入でしのぐことになった。"}},
+   {t:"農業票を守るため、コメ市場の開放に最後まで抵抗する",tag:"別ルート",fx:{intl:-8,trust:3,poll:-3},memo:"1993 コメ開放に抵抗",
+    res:"農村部の支持は固まったが、国際交渉で日本は孤立しかけている。"}
+  ]},
+ {when:"平成6年（1994年）1月",short:"94.1",title:"選挙制度、大改革へ",
+  sesou:"ポケベルが若者の必需品になり始めた。",
+  sit:"「政治とカネ」への怒りを受け、衆議院の選挙制度を変える政治改革法案が大詰めを迎えている。どんな制度にするかで、これからの政党政治の形が決まる。",
+  opts:[
+   {t:"小選挙区比例代表並立制で決着させる",tag:"史実",fx:{poll:3},memo:"1994 小選挙区比例代表並立制",
+    res:"小選挙区を中心とする新制度が成立した。政権交代が起きやすくなる一方、党執行部の力が強まる。"},
+   {t:"比例代表を厚くした制度を提案する",tag:"進言",bonus:-10,
+    ok:{fx:{poll:2,trust:2},memo:"1994 比例重視の選挙制度",res:"比例代表を厚くした制度が成立した。小さな政党も議席を得やすくなり、連立政治が当たり前になりそうだ。"},
+    ng:{fx:{poll:3,trust:-2},memo:"1994 小選挙区比例代表並立制",res:"提案は通らず、小選挙区中心の並立制で決着した。"}},
+   {t:"派閥の論理で、中選挙区制を守り抜く",tag:"別ルート",fx:{trust:5,poll:-8},memo:"1994 中選挙区制を維持",
+    res:"改革は骨抜きになった。派閥の領袖たちは喜んだが、世論は「改革に背を向けた」と冷ややかだ。"}
+  ],
+  after:n=>{
+    if(n.path==="new"){n.role="opp";return "【政局】同年6月、古巣が連立で政権に返り咲き、新党は野党に転落した。あなたも大臣の座を失う。"}
+    const kept=n.memos.includes("1993 党分裂を阻止");
+    if(n.trust>=45){n.role="min";return kept?"【人事】内閣改造で、あなたは大蔵大臣に就任した。金融・財政はあなたが直接決められる。":"【人事】同年6月、党は連立で政権に復帰した。あなたは大蔵大臣に就任する。金融・財政はあなたが直接決められる。"}
+    n.role="party";return kept?"【人事】内閣改造で入閣は見送られた。あなたは党の政策幹部として力を蓄える。":"【人事】同年6月、党は連立で政権に復帰した。ただ入閣は見送られ、あなたは党の政策幹部として力を蓄える。";
+  }},
+ {when:"平成7年（1995年）1月",short:"95.1",title:"阪神・淡路大震災",
+  sesou:"早朝5時46分、関西を激しい揺れが襲った。",
+  variant:s=>s.crisis>=1
+    ?{sit:"未明の大地震で、神戸を中心に甚大な被害が出ている。雲仙で整えた国主導の災害対応の仕組みが、ここで試される。",extra:{fiscal:-8,poll:2}}
+    :{sit:"未明の大地震で、神戸を中心に甚大な被害が出ている。官邸には情報が届かず、初動の遅れが懸念されている。",extra:{fiscal:-8,poll:-4}},
+  opts:[
+   {t:"被害情報を待ち、通常の手順で対応する",tag:"史実",fx:{},memo:"1995 震災に通常の手順で対応",
+    res:s=>s.crisis>=1?"雲仙での経験が生き、情報の集約は比較的早かった。それでも被害の大きさに救援は追いつかない。":"情報の集約に時間がかかり、救援の遅れが厳しく批判された。"},
+   {t:"自衛隊の即時派遣と、官邸主導の救援を強く求める",tag:"進言",bonus:0,dyn:s=>s.crisis*15,
+    ok:{fx:{poll:6,crisis:1},memo:"1995 震災で官邸主導の初動",res:"救援部隊が早期に被災地へ入った。官邸主導の初動は、のちの災害対応の手本になる。"},
+    ng:{fx:{},memo:"1995 震災に通常の手順で対応",res:"手続きの壁は厚く、救援の本格化には時間がかかった。"}},
+   {t:"超党派で、官邸に危機管理の専任組織をつくる法案を急ぐ",tag:"別ルート",fx:{crisis:2,trust:-3,fiscal:-2},memo:"1995 官邸に危機管理組織",
+    res:"今回の救援には間に合わなかったが、官邸に危機管理の司令塔ができた。次の大災害への備えになる。"}
+  ]},
+ {when:"平成7年（1995年）4月",short:"95.4",title:"1ドル79円台の超円高",
+  sesou:"この年、パソコンとインターネットが一気に身近になる。",
+  sit:"円が急騰し、輸出企業が悲鳴を上げている。工場の海外移転が加速すれば、地方の雇用が失われる。",
+  opts:[
+   {t:"日銀と協調し、介入と利下げで円高を止める",tag:"史実",fx:{bubble:3,jobs:-2},
+    res:"夏以降、円高は落ち着いた。ただ、工場の海外移転の流れは変わらない。"},
+   {t:"円高を機に、行政と学校のIT化へ大型投資する",tag:"進言",bonus:0,fin:1,
+    ok:{fx:{fiscal:-8,it:1,jobs:2},memo:"1995 行政と教育のIT化",res:"全国の役所と学校にパソコンとネットワークを配備する計画が動き出した。効果が見えるのは、ずっと先だ。"},
+    ng:{fx:{bubble:3,jobs:-2},res:"「今は円高対策が先だ」と退けられた。"}},
+   {t:"国内に工場を残す企業へ、税の優遇を働きかける",tag:"別ルート",fx:{fiscal:-4,jobs:3,trust:-2},memo:"1995 国内工場への税優遇",
+    res:"国内に踏みとどまる工場が少し増えた。地方の雇用はひとまず守られる。"}
+  ]},
+
+ /* ---------- 第3章 ---------- */
+ {when:"平成8年（1996年）1月",short:"96.1",title:"住専に税金を投じるか",
+  sesou:"ルーズソックスとプリクラが女子高生の間で大流行。",
+  variant:s=>s.npl>=40
+    ?{sit:"住宅金融専門会社（住専）7社の処理に、6850億円の公的資金を投じる案が浮上した。だが住専は氷山の一角で、大手銀行にも巨額の損失が眠っている。"}
+    :s.npl>=20
+    ?{sit:"住宅金融専門会社（住専）7社の処理に、公的資金を投じる案が浮上した。銀行にも損失は残っているが、史実ほど深刻ではない。"}
+    :{sit:"住宅金融専門会社（住専）の処理が議題に上っている。早めに傷を癒したおかげで、問題の規模は史実よりずっと小さい。",extra:{poll:3}},
+  opts:[
+   {t:"住専だけに公的資金を投じる",tag:"史実",fx:{poll:-10,fiscal:-3,npl:-5},memo:"1996 住専に公的資金",
+    res:"「なぜ住専に税金を」と世論は猛反発し、国会は座り込みで紛糾した。銀行本体の問題は手つかずのまま残る。"},
+   {t:"住専だけでなく、大手銀行まで一気に処理する",tag:"進言",bonus:-10,fin:1,
+    ok:{fx:{nplMul:.4,poll:-14,trust:-6,fiscal:-12},memo:"1996 銀行まで一括処理",res:"銀行まで含めた大手術が始まった。世論の怒りは激しいが、金融システムの膿はかなり出せた。"},
+    ng:{fx:{poll:-10,fiscal:-3,npl:-5,trust:-2},rej:"銀行まで一括処理",memo:"1996 住専に公的資金",res:"党内の反対で、処理は住専だけにとどまった。"}},
+   {t:"母体銀行に責任を負わせ、税金の投入を最小にする",tag:"別ルート",fx:{nplMul:.85,poll:2,trust:-5},memo:"1996 母体行に負担",
+    res:"税金の投入は抑えられ、世論は納得した。ただ、銀行の体力はさらに削られた。"}
+  ]},
+ {when:"平成9年（1997年）4月",short:"97.4",title:"消費税、5%へ",
+  sesou:"たまごっちを求めて、おもちゃ店に行列ができた。",
+  variant:s=>({sit:"消費税率を3%から5%へ上げる時期が来た。財政再建には欠かせないが、"+(s.npl>=40?"銀行の不良債権はまだ重く、景気の足腰は弱い。":s.npl>=20?"景気の回復はまだ心もとない。":"景気は持ち直しつつある。")}),
+  opts:[
+   {t:"予定どおり引き上げる",tag:"史実",fx:{fiscal:8,poll:-5,bubble:-4,tax:1},memo:"1997 消費税5%",
+    res:"税率は5%に上がった。駆け込み需要の反動で、景気は冷え込み始める。"},
+   {t:"景気が本格的に回復するまで延期する",tag:"進言",bonus:0,fin:1,
+    ok:{fx:{fiscal:-5,poll:3},memo:"1997 増税を延期",res:"引き上げは先送りされた。景気は守られたが、財政の穴は広がる。"},
+    ng:{fx:{fiscal:8,poll:-5,bubble:-4,tax:1},memo:"1997 消費税5%",res:"「国際公約だ」と退けられ、予定どおり引き上げられた。"}},
+   {t:"引き上げと同時に、所得減税を続けさせる",tag:"別ルート",fx:{fiscal:2,poll:-1,bubble:-1,tax:1,trust:-2},memo:"1997 増税と減税を同時に",
+    res:"家計の負担は和らいだが、財政再建の効果は小さくなった。"}
+  ]},
+ {when:"平成9年（1997年）11月",short:"97.11",title:"",
+  variant:s=>{const p=pressure(s);
+    if(p>=45) return {title:"大手証券・銀行、相次ぐ破綻",sesou:"四大証券の一角が自主廃業を発表し、社長は会見で涙を流した。",
+      sit:"アジア通貨危機の余波のなか、大手証券や都市銀行が次々に経営破綻した。金融システムそのものが揺らいでいる。",extra:{bubble:-8,jobs:-10,poll:-6},fc:"h"};
+    if(p>=20) return {title:"金融不安、中堅の破綻が続く",sesou:"「次はどこが危ない」という噂が週刊誌をにぎわせた。",
+      sit:"アジア通貨危機の余波で、中堅の証券会社や地方銀行の破綻が相次いでいる。大手にも不安が広がりつつある。",extra:{bubble:-6,jobs:-5,poll:-3},fc:"m"};
+    return {title:"アジア通貨危機、日本は持ちこたえた",sesou:"「日本の銀行は大丈夫か」という声は、思ったほど広がらなかった。",
+      sit:"アジア各国の通貨が暴落した。だが日本の銀行は早めに傷を癒していたため、大きな破綻は起きていない。アジアの国々が日本の支援を求めている。",extra:{bubble:2,intl:4},fc:"l"};},
+  opts:[
+   {t:"破綻処理を個別に進める",tag:"史実",fx:{},memo:"1997 破綻を個別処理",
+    res:s=>s.fc==="h"?"破綻は止まらず、貸し渋りが中小企業を襲った。日本は戦後初めての本格的な金融危機に突入する。":"個別処理で、危機はなんとか封じ込められた。"},
+   {t:"大規模な公的資金で、金融システム全体を守る",tag:"進言",bonus:0,fin:1,
+    ok:{fx:{nplMul:.4,fiscal:-14,poll:-5,jobs:4},memo:"1997 公的資金で金融システム防衛",res:"数十兆円規模の資金枠が用意され、連鎖破綻は食い止められた。"},
+    ng:{fx:{},memo:"1997 破綻を個別処理",res:"「税金で銀行を救うのか」という反発に押され、案は退けられた。破綻は個別に処理される。"}},
+   {t:"アジアの通貨安定に向けた基金づくりを主導する",tag:"別ルート",fx:{intl:8,fiscal:-6,trust:3},memo:"1997 アジア通貨基金を主導",
+    res:"日本主導の支援の枠組みにアジア各国が加わった。米国は警戒しているが、日本の存在感は高まった。"}
+  ]},
+ {when:"平成10年（1998年）8月",short:"98.8",title:"ミサイルが日本列島を越えた",
+  sesou:"長野五輪の熱狂から半年がたっていた。",
+  sit:"北朝鮮が発射したミサイルが東北の上空を越え、太平洋に落ちた。事前の通告はなかった。国民の不安が高まっている。",
+  opts:[
+   {t:"情報収集衛星の導入を決める",tag:"史実",fx:{fiscal:-4,intl:1,defense:1},memo:"1998 情報収集衛星を導入",
+    res:"独自の偵察衛星を持つことが決まった。ミサイル防衛の研究も日米で始まる。"},
+   {t:"ミサイル防衛まで一気に整備するよう求める",tag:"進言",bonus:-5,
+    ok:{fx:{fiscal:-10,intl:-3,poll:4,defense:2},memo:"1998 ミサイル防衛を本格整備",res:"大規模な防衛投資が決まった。国民は安心したが、周辺国は反発している。"},
+    ng:{fx:{fiscal:-4,intl:1,defense:1},memo:"1998 情報収集衛星を導入",res:"財政難を理由に、情報収集衛星の導入にとどまった。"}},
+   {t:"制裁を控え、水面下の対話ルートを開く",tag:"別ルート",fx:{intl:3,poll:-6,trust:-3},memo:"1998 北朝鮮と水面下の対話",
+    res:"非公式の接触が始まった。拉致問題の進展につながるかは、まだ分からない。"}
+  ]},
+ {when:"平成11年（1999年）3月",short:"99.3",title:"",
+  variant:s=>s.jobs<55
+    ?{title:"就職氷河期、底なしに",sesou:"「就職氷河期」という言葉が、すっかり定着した。",
+      sit:"企業は新卒採用を絞り続け、大学を出ても職のない若者があふれている。このまま一世代が不安定な雇用に固定されれば、将来の家族形成にも影を落とす。",extra:{youth:-1}}
+    :{title:"新卒採用に陰り",sesou:"iモードが始まり、携帯でメールを送る時代になった。",
+      sit:"景気の先行きを不安視して、企業が新卒採用を絞り始めた。今のうちに手を打てば、氷河期は避けられるかもしれない。"},
+  opts:[
+   {t:"雇用は企業に任せる",tag:"史実",fx:{youth:-1},memo:"1999 若年雇用を企業任せ",
+    res:"若者の就職難は放置された。この世代の苦境は、令和まで尾を引くかもしれない。"},
+   {t:"大規模な就職支援と、正社員採用への助成を求める",tag:"進言",bonus:0,
+    ok:{fx:{fiscal:-12,youth:2,poll:4,jobs:4},memo:"1999 若者の正社員化を支援",res:"職業訓練と採用助成の大型予算が成立した。多くの若者が安定した職を得る。"},
+    ng:{fx:{youth:-1},memo:"1999 若年雇用を企業任せ",res:"「財源がない」と退けられた。若者の就職難は続く。"}},
+   {t:"経済界に、新卒採用を維持するよう直談判する",tag:"別ルート",fx:{youth:1,trust:-4,jobs:1},memo:"1999 経済界に採用維持を要請",
+    res:"大企業の一部が採用枠を守った。効果は限られるが、ゼロではない。"}
+  ]},
+ {when:"平成11年（1999年）9月",short:"99.9",title:"東海村で臨界事故",
+  sesou:"年末の「2000年問題」に備え、各地でコンピューターの点検が続いている。",
+  sit:"茨城県東海村の核燃料加工施設で臨界事故が起きた。作業員が被ばくし、周辺の約31万人に屋内退避が呼びかけられた。原子力の安全をどう守るかが問われている。",
+  opts:[
+   {t:"事業者の責任を問い、原子力災害の特別法を整える",tag:"史実",fx:{poll:-2},memo:"1999 原子力災害の特別法",
+    res:"原子力災害への対応を定めた法律が整えられた。ただ、規制する側と推進する側は同じ役所のままだ。"},
+   {t:"推進官庁から切り離した、独立の原子力規制機関をつくる",tag:"進言",bonus:-5,
+    ok:{fx:{nuclear:2,trust:-3,poll:3},memo:"1999 独立した原子力規制機関",res:"推進と規制を分ける新組織が生まれた。電力業界は反発したが、安全の監視は格段に厳しくなる。"},
+    ng:{fx:{poll:-2},memo:"1999 原子力災害の特別法",res:"電力業界の反対で、特別法の整備にとどまった。"}},
+   {t:"原子力推進そのものの見直しを訴える",tag:"別ルート",fx:{nuclear:1,poll:2,bubble:-2,trust:-5},memo:"1999 原子力推進の見直し",
+    res:"原発の新設計画にブレーキがかかった。電力をどう確保するかという、新しい宿題が生まれた。"}
+  ]}
+];
+const RIGHT=["段階的な利上げ","総量規制の段階導入","公的資金による早期処理","銀行まで一括処理"];
+const S0={step:0,bubble:90,landHeat:85,npl:0,poll:40,trust:50,intl:50,fiscal:60,jobs:70,crisis:0,youth:0,food:0,it:0,nuclear:0,defense:0,tax:0,
+  role:"aide",path:"stay",fc:"",memos:[],rejected:[],vind:[]};
+const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
+const nikkei=s=>Math.round((12000+s.bubble*300)/10)*10;
+const land=s=>Math.round(40+s.landHeat*.7);
+const METRICS=[
+ {lb:"日経平均",f:nikkei,fmt:v=>v.toLocaleString("ja-JP")+"円"},
+ {lb:"地価指数",f:land,fmt:v=>v},
+ {lb:"雇用",f:s=>s.jobs,fmt:v=>v,bar:1},
+ {lb:"内閣支持率",f:s=>s.poll,fmt:v=>v+"%",bar:1},
+ {lb:"あなたの信頼",f:s=>s.trust,fmt:v=>v,bar:1},
+ {lb:"国際評価",f:s=>s.intl,fmt:v=>v,bar:1},
+ {lb:"財政余力",f:s=>s.fiscal,fmt:v=>v,bar:1}
+];
+const cp=o=>JSON.parse(JSON.stringify(o));
+
+function ev(s,i){const e=EVENTS[i];return e.variant?Object.assign({},e,e.variant(s)):e}
+function mode(s,o){
+  if(!o.ok) return {k:"fixed"};
+  if(s.role==="min"&&o.fin) return {k:"direct"};
+  return {k:"roll",c:clamp(Math.round(25+s.trust*.6+(o.bonus||0)+ROLE_BONUS[s.role]+(o.dyn?o.dyn(s):0)),10,90)};
+}
+function addFx(n,fx){for(const [k,v] of Object.entries(fx||{})){ if(k==="nplMul") n.npl=Math.round(n.npl*v); else n[k]=(n[k]||0)+v; }}
+function resolve(s,i,oi,roll){
+  const e=ev(s,i), o=e.opts[oi], m=mode(s,o); let br, adopted=null;
+  if(m.k==="fixed") br=o; else if(m.k==="direct"){br=o.ok;adopted=true} else {adopted=roll<m.c; br=adopted?o.ok:o.ng}
+  const n=cp(s);
+  if(e.fc) n.fc=e.fc;
+  addFx(n,e.extra); addFx(n,br.fx);
+  if(br.set) Object.assign(n,br.set);
+  const ch=chOf(i).n;
+  if(ch===1){ if(i>=2) n.bubble-=3; }
+  else {
+    if(n.bubble>60){ n.npl+=6; n.bubble-=5; }
+    else if(n.npl<30) n.bubble+=2;
+    n.npl+=Math.round(n.npl*.06); if(n.bubble<20) n.jobs-=1;
+    n.poll+=Math.round((40-n.poll)*.15);
+  }
+  n.bubble=clamp(n.bubble,0,100);
+  n.landHeat+=(n.bubble-n.landHeat)*.5;
+  n.poll=clamp(n.poll,5,80); for(const k of ["trust","intl","fiscal","jobs"]) n[k]=clamp(n[k],0,100);
+  n.npl=Math.max(0,n.npl);
+  if(br.memo) n.memos.push(br.memo);
+  if(br.rej) n.rejected.push(br.rej);
+  const res=typeof br.res==="function"?br.res(n):br.res;
+  const extra=e.after?e.after(n):"";
+  n.step=i+1;
+  return {n,res,extra,adopted,direct:m.k==="direct",memo:br.memo};
+}
+function vindicate(s){
+  const n=cp(s);
+  for(const r of n.rejected) if(RIGHT.includes(r)&&!n.vind.includes(r)){n.vind.push(r);n.trust=clamp(n.trust+5,0,100)}
+  return n;
+}
+const HIST=(()=>{let s=cp(S0);EVENTS.forEach((e,i)=>{s=resolve(s,i,0,0).n;if(i===5||i===10)s=vindicate(s)});return s})();
+
+let st,phase,last,prev;
+function start(d){st=d.st||cp(S0);phase=d.phase||"event";last=d.last||null;prev=d.prev||null;render()}
+window.claude?.hot?.snapshot?.(()=>({st,phase,last,prev}));
+
+const $=id=>document.getElementById(id);
+const esc=t=>String(t).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const roleLabel=s=>s.role==="min"&&s.path==="new"?"連立政権の大蔵大臣":ROLE[s.role];
+function curCh(){
+  if(phase==="report"||phase==="final") return chOf(Math.max(0,st.step-1));
+  return chOf(Math.min(st.step,EVENTS.length-1));
+}
+function renderTrack(){
+  const c=curCh();
+  $("eyebrow").textContent=c.name+"　"+c.span;
+  let h="";
+  for(let i=c.from;i<=c.to;i++){
+    const cls=i<st.step?"done":(i===st.step&&(phase==="event"))?"now":"";
+    h+=`<span class="${cls}">${EVENTS[i].short}</span>`;
+  }
+  h+=`<span class="${phase==="report"||phase==="final"?"now":""}">章末</span>`;
+  $("track").innerHTML=h;
+}
+function renderBoard(){
+  const tiles=METRICS.map(m=>{
+    const v=m.f(st), p=prev?m.f(prev):null, d=(p===null||phase!=="result")?0:v-p;
+    const ds=d?`<span class="${d>0?"up":"dn"}">${d>0?"▲":"▼"} ${Math.abs(d).toLocaleString("ja-JP")}</span>`:"";
+    return `<div class="g"><span class="lb">${m.lb}</span><span class="v">${m.fmt(v)}</span>${m.bar?`<div class="bar"><i style="width:${clamp(v,0,100)}%"></i></div>`:""}<span class="d">${ds}</span></div>`;
+  });
+  const rc=prev&&phase==="result"&&prev.role!==st.role;
+  tiles.push(`<div class="g"><span class="lb">あなたの立場</span><span class="v txt">${roleLabel(st)}</span><span class="d">${rc?'<span class="up">異動</span>':""}</span></div>`);
+  $("board").innerHTML=tiles.join("");
+}
+function renderEvent(){
+  const e=ev(st,st.step);
+  $("main").innerHTML=`<article class="doc">
+    <div class="date">${e.when}</div>
+    <h2>${e.title}</h2>
+    <div class="sesou">世相｜${e.sesou}</div>
+    <p class="sit">${e.sit}</p>
+    <div class="opts">${e.opts.map((o,i)=>{
+      const m=mode(st,o);
+      let cls="",label=o.tag;
+      if(m.k==="direct"){cls="dir";label="大臣として決定"}
+      else if(m.k==="roll"){cls="adv";label=(st.role==="opp"?"党として提言":"進言")+`｜採用の見込み ${m.c}%`}
+      else if(o.tag==="別ルート") cls="alt";
+      return `<button class="opt" id="opt${i}" data-i="${i}"><span class="tag ${cls}">${label}</span><span class="t">${esc(o.t)}</span></button>`}).join("")}</div>
+  </article>`;
+  document.querySelectorAll(".opt").forEach(b=>b.onclick=()=>choose(+b.dataset.i));
+}
+function choose(oi){
+  const e=ev(st,st.step);
+  prev=st; const r=resolve(st,st.step,oi,Math.random()*100);
+  last={i:st.step,title:e.title,when:e.when,t:e.opts[oi].t,res:r.res,extra:r.extra,adopted:r.adopted,direct:r.direct,memo:r.memo,dNpl:r.n.npl-st.npl};
+  st=r.n; phase="result"; render(); window.scrollTo({top:0,behavior:"smooth"});
+}
+function renderResult(){
+  const stamp=last.direct?"決定":last.adopted===true?"採用":last.adopted===false?"却下":"決";
+  const chips=[];
+  if(last.dNpl>=8) chips.push(`<span class="chip hid">見えない負債 ▲</span>`);
+  if(last.dNpl<=-8) chips.push(`<span class="chip hid">見えない負債 ▼</span>`);
+  const endCh=CHAPTERS.some(c=>c.to===last.i);
+  const nextLabel=!endCh?"次の出来事へ":last.i===EVENTS.length-1?"10年の総括へ":"章末レポートへ";
+  $("main").innerHTML=`<article class="doc">
+    <div class="stamp" aria-label="${stamp}">${stamp}</div>
+    <div class="date">${last.when}</div>
+    <h2>${last.title}</h2>
+    <div class="sesou">あなたの判断｜${esc(last.t)}</div>
+    <p class="res">${last.res}</p>
+    ${last.extra?`<p class="extra">${last.extra}</p>`:""}
+    ${chips.length?`<div class="chips">${chips.join("")}</div>`:""}
+    ${last.memo?`<div class="pager" role="status"><span>ｹﾂﾀﾞﾝ ｶﾞ ｷｵｸ ｻﾚﾀ</span><small>${esc(last.memo)}</small></div>`:""}
+    <div class="row"><button class="btn" id="next">${nextLabel}</button></div>
+  </article>`;
+  $("next").onclick=()=>{phase=!endCh?"event":last.i===EVENTS.length-1?"final":"report";prev=null;render();window.scrollTo({top:0,behavior:"smooth"})};
+}
+function risk(p){return p>=45?["h","高"]:p>=20?["m","中"]:["l","低"]}
+function memoList(list){return list.length?`<ul class="memos">${list.map(m=>`<li>${esc(m)}</li>`).join("")}</ul>`:`<p class="note">なし</p>`}
+function tableRows(){return METRICS.map(m=>`<tr><td>${m.lb}</td><td class="n">${m.fmt(m.f(st))}</td><td class="n">${m.fmt(m.f(HIST))}</td></tr>`).join("")}
+function chMemos(c){const y=[1989,1993,1996][c.n-1],y2=[1992,1995,1999][c.n-1];return st.memos.filter(m=>{const v=+m.slice(0,4);return v>=y&&v<=y2})}
+function goNext(){
+  const n=st.step;
+  st=vindicate(st); phase="event"; render(); window.scrollTo({top:0,behavior:"smooth"});
+  const fresh=st.vind.filter(v=>!prevVind.includes(v));
+  if(fresh.length){
+    const box=document.createElement("div");box.className="pager";box.setAttribute("role","status");
+    box.innerHTML=`<span>ｼﾝｹﾞﾝ ｶﾞ ﾐﾅｵｻﾚﾀ</span><small>${esc(fresh.join("、"))}が正しかったと評価され、信頼が上がった</small>`;
+    $("main").prepend(box);
+  }
+}
+let prevVind=[];
+function renderReport(){
+  const c=curCh();
+  if(c.n===1){
+    const [rc,rl]=risk(pressure(st)), [hc,hl]=risk(pressure(HIST));
+    const verdict=rc==="l"?"傷は浅い。あなたの日本は、90年代後半の嵐をくぐり抜けられるかもしれない。":rc==="m"?"火種は残った。90年代後半、どこかで炎が上がるだろう。":"巨大な負債が眠っている。このままなら90年代後半、金融危機は避けられない。";
+    $("main").innerHTML=`<article class="doc">
+      <div class="stamp">章末</div>
+      <div class="date">平成4年（1992年）末</div>
+      <h2>第1章 報告書</h2>
+      <p class="verdict">${verdict}</p>
+      <div class="sec"><h3>隠れていた数字</h3>
+        <p class="res">銀行の不良債権（推計）は <b>${Math.round(st.npl*1.2)}兆円</b>。史実どおりに進めた場合は ${Math.round(HIST.npl*1.2)}兆円。<br>
+        このまま進んだ場合の、1997年の金融危機の危険度：<span class="risk ${rc}">${rl}</span>（史実ルート：<span class="risk ${hc}">${hl}</span>）</p></div>
+      <div class="sec"><h3>記憶された決断</h3>${memoList(chMemos(c))}</div>
+      ${st.rejected.filter(r=>RIGHT.includes(r)).length?`<p class="note">却下されたあなたの進言のなかに、のちに正しかったと分かるものがある。第2章の冒頭で信頼が回復する。</p>`:""}
+      ${st.crisis?`<p class="note">火山対応で整えた危機管理の備えは、1995年に試される。</p>`:""}
+      <div class="row"><button class="btn" id="go">第2章へ進む</button><button class="btn ghost" id="again">最初からやり直す</button></div>
+    </article>`;
+  } else {
+    const npHint=st.npl>=40?"銀行の不良債権は、見えない場所で膨らみ続けている。":st.npl>=20?"銀行の不良債権は、まだくすぶっている。":"銀行の傷は、おおむね癒えている。";
+    $("main").innerHTML=`<article class="doc">
+      <div class="stamp">章末</div>
+      <div class="date">平成7年（1995年）末</div>
+      <h2>第2章 報告書</h2>
+      <p class="verdict">あなたは今、${roleLabel(st)}。${st.path==="new"?"古巣を割った過去は、党内でまだ語り草だ。":st.role==="min"?"金融・財政の舵は、あなたの手にある。":"表舞台に立つ日を待っている。"}</p>
+      <div class="sec"><h3>次の章への火種</h3><ul class="memos">
+        <li>${npHint}</li>
+        <li>${st.crisis>=2?"官邸の危機管理は、史実より一段強い。":st.crisis===1?"危機管理の備えは、わずかに史実を上回る。":"危機管理の備えは、史実と変わらない。"}</li>
+        <li>雇用は ${st.jobs}（史実ルート ${HIST.jobs}）。</li></ul></div>
+      <div class="sec"><h3>記憶された決断</h3>${memoList(chMemos(c))}</div>
+      <div class="row"><button class="btn" id="go">第3章へ進む</button><button class="btn ghost" id="again">最初からやり直す</button></div>
+    </article>`;
+  }
+  $("go").onclick=()=>{prevVind=st.vind.slice();goNext()};
+  $("again").onclick=()=>start({});
+}
+function renderFinal(){
+  const fcText={h:"大手証券・銀行が相次いで破綻し、本格的な金融危機に陥った。",m:"中堅の破綻が続いたが、大手の連鎖破綻は避けられた。",l:"アジア通貨危機のなかでも、日本の金融は持ちこたえた。"}[st.fc]||"";
+  const tfr=clamp(1.36+(st.jobs-HIST.jobs)*.006+(st.youth-HIST.youth)*.06-(st.fc==="h"?.03:st.fc==="l"?-.04:0),1.1,1.9).toFixed(2);
+  const score=(st.fc==="l"?2:st.fc==="m"?1:0)+(st.jobs>=HIST.jobs+8?1:0)+(st.youth>=1?1:0);
+  const verdict=score>=3?"失われるはずだった10年を、あなたは取り戻しつつある。":score>=1?"史実とは違う道を歩み始めた。だが、平成の傷はまだ深い。":"平成の最初の10年は、ほぼ史実どおりに過ぎていった。";
+  const pm=st.path==="new"?"古巣を割った過去が重く、首相への道は険しい。別の道を探すことになる。":st.trust>=60?"党内で、次の首相候補の筆頭に名前が挙がっている。":st.trust>=40?"首相候補の一人として、名前が挙がり始めた。":"党内の評価は低い。首相の座は遠い。";
+  const has=m=>st.memos.includes(m);
+  const seeds=[
+    st.crisis>=2?"官邸の危機管理は史実より強い。2011年の大震災で、初動が変わるかもしれない。":"危機管理の備えは史実並み。2011年の大震災の初動は、史実に近くなりそうだ。",
+    st.nuclear>=2?"独立した原子力規制機関がある。2011年の原発事故の規模が変わる可能性がある。":st.nuclear===1?"原子力推進にブレーキがかかった。エネルギー政策は史実と違う道をたどる。":"原子力の規制と推進は同じ役所のまま。2011年への最大の伏線が残っている。",
+    st.youth>=1?"若者の雇用を支えた。令和の出生率と人手不足に、良い影響が出そうだ。":"就職氷河期の世代が生まれた。令和の少子化に影を落とすだろう。",
+    st.it?"行政と学校のIT化に早くから投資した。コロナ禍とAI時代に、その差が出るかもしれない。":"行政のIT化は手つかず。コロナ禍で、その遅れが表面化しそうだ。",
+    st.food?"コメの備蓄制度が早くから整っている。令和の米騒動は、穏やかに済むかもしれない。":"コメの備えは史実並み。令和の米騒動は、史実に近い形で起きそうだ。",
+    ...(st.fiscal<20?["財政余力がほとんど残っていない。2000年代は、増税か歳出削減かの苦しい選択が続く。"]:[]),
+    has("1994 中選挙区制を維持")?"中選挙区制が残った。2000年代も、派閥政治が続くだろう。":has("1994 比例重視の選挙制度")?"比例重視の制度で、連立政治が当たり前になる。":"小選挙区中心の制度で、2009年の政権交代も起きうる。"
+  ];
+  $("main").innerHTML=`<article class="doc">
+    <div class="stamp">総括</div>
+    <div class="date">平成11年（1999年）末</div>
+    <h2>最初の10年 報告書</h2>
+    <p class="verdict">${verdict}</p>
+    <div class="sec"><h3>金融</h3><p class="res">${fcText}銀行の不良債権（推計）は <b>${Math.round(st.npl*1.2)}兆円</b>（史実ルート ${Math.round(HIST.npl*1.2)}兆円）。</p></div>
+    <div class="sec"><h3>1999年末の日本</h3><div class="tbl"><table><thead><tr><th>指標</th><th class="n">あなた</th><th class="n">史実ルート</th></tr></thead><tbody>${tableRows()}</tbody></table></div>
+      <p class="res">令和元年（2019年）の出生率の予測：<b>${tfr}</b>（史実は1.36）</p></div>
+    <div class="sec"><h3>あなたのキャリア</h3><p class="res">${roleLabel(st)}として平成12年を迎える。${pm}</p></div>
+    <div class="sec"><h3>令和への伏線</h3><ul class="memos">${seeds.map(s=>`<li>${s}</li>`).join("")}</ul></div>
+    <div class="sec"><h3>記憶された決断</h3>${memoList(st.memos)}</div>
+    <div class="pager"><span>ﾂｷﾞﾊ 2000 ｼﾝｾｲｷ</span><small>第4章以降は未実装</small></div>
+    <div class="row"><button class="btn ghost" id="again">最初からやり直す</button></div>
+  </article>`;
+  $("again").onclick=()=>start({});
+}
+let confirmRestart=false;
+function renderRestart(){
+  const el=$("restart");
+  el.innerHTML=confirmRestart
+    ?`<span>これまでの進行が消えます。最初から始めますか？</span><button class="yes" id="rsYes">最初から始める</button><button id="rsNo">続ける</button>`
+    :`<button id="rsAsk">最初から始める</button>`;
+  if(confirmRestart){
+    $("rsYes").onclick=()=>{confirmRestart=false;prevVind=[];start({});window.scrollTo({top:0,behavior:"smooth"})};
+    $("rsNo").onclick=()=>{confirmRestart=false;renderRestart()};
+  } else $("rsAsk").onclick=()=>{confirmRestart=true;renderRestart();$("rsYes").focus()};
+}
+function render(){
+  renderRestart(); renderTrack(); renderBoard();
+  if(phase==="event") renderEvent(); else if(phase==="result") renderResult(); else if(phase==="report") renderReport(); else renderFinal();
+}
+window.claude?.hot?.ready ? window.claude.hot.ready(start) : start(window.claude?.hot?.data ?? {});
+</script>
+
+</body>
+</html>
